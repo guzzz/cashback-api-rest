@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+
+  api:
+    image: cashback_django_api:dev
+    build:
+      context: .
+      args:
+        release: dev
+    volumes:
+      - ./:/usr/src/app
+      - django-media:/usr/src/app/media
+      - django-static:/usr/src/app/static
+    env_file:
+      - develop.env
+    environment:
+      - COMMAND=runserver
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13.0
+    environment:
+      POSTGRES_DB: "test"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+volumes:
+  django-media:
+  django-static:
+  postgres-data:
+
+networks:
+    default:
+        external:
+            name: cashback_net
